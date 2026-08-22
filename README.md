@@ -24,9 +24,18 @@ self-contained (no external refs), safe for Flatpak/live-ISO offline use.
 
 - Installer Source-step cards: render at 96 px.
 - Welcome pages / ISO boot menus: 128–512 px, scale freely.
-- These are the source of truth; PR them to
-  `projectbluefin/fisherman:data/images/` to replace the current placeholder
-  clip-art (where `albacore.svg` is byte-identical to `tunaos.svg`).
+- These are the source of truth. Consumers should pin a commit or release from
+  this repository and verify copied files against `branding-manifest.json`.
+- The installer consumer is
+  [`tuna-os/fisherman:data/images/`](https://github.com/tuna-os/fisherman/tree/main/data/images/).
+  Update its pin and vendored assets together; do not copy an unversioned branch
+  tip.
+
+`branding-manifest.json` is the machine-readable asset contract. Its
+`schema_version` covers the manifest format, while each value binds an asset
+name to its SHA-256 digest. Any asset change must update the corresponding
+digest in the same commit. Consumers can reject missing, extra, or modified
+assets before packaging an installer.
 
 Regenerate the preview sheet with cairosvg (see `sheet.py` pattern in repo
 history / any cairosvg one-liner).
