@@ -33,12 +33,36 @@ self-contained (no external refs), safe for Flatpak/live-ISO offline use.
 
 `branding-manifest.json` is the machine-readable asset contract. Its
 `schema_version` covers the manifest format, while each value binds an asset
-name to its SHA-256 digest. Any asset change must update the corresponding
-digest in the same commit. Consumers can reject missing, extra, or modified
+name to its SHA-256 digest. Consumers can reject missing, extra, or modified
 assets before packaging an installer.
 
-Regenerate the preview sheet with cairosvg (see `sheet.py` pattern in repo
-history / any cairosvg one-liner).
+## Maintaining the manifest
+
+After intentionally changing an SVG, update its digest in
+`branding-manifest.json` from the repository root:
+
+```bash
+asset=albacore.svg
+digest=$(sha256sum "$asset" | cut -d ' ' -f 1)
+jq --arg asset "$asset" --arg digest "sha256:$digest" \
+  '.assets[$asset] = $digest' branding-manifest.json > branding-manifest.json.new
+mv branding-manifest.json.new branding-manifest.json
+```
+
+Replace `albacore.svg` with the asset that changed. Keep the manifest update in
+the same commit as the SVG change. Before committing, verify every declared
+asset and make sure the manifest neither omits nor names an extra SVG:
+
+```bash
+jq -r '.assets | to_entries[] | "\(.value | sub("sha256:"; ""))  \(.key)"' \
+  branding-manifest.json | sha256sum --check --strict
+
+diff -u \
+  <(find . -maxdepth 1 -type f -name '*.svg' -printf '%f\n' | sort) \
+  <(jq -r '.assets | keys[]' branding-manifest.json | sort)
+```
+
+Both commands should finish without errors or differences.
 
 ## License
 
