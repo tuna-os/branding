@@ -64,6 +64,16 @@ diff -u \
 
 Both commands should finish without errors or differences.
 
+## Running Tests
+
+An automated Python test suite is provided in `tests/test_branding.py` to validate manifest schema compliance, SVG dimensions (128x128), SHA-256 digest matching, asset completeness, and absence of external references.
+
+Run the test suite using Python's standard `unittest` module:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
 ## License
 
 CC-BY-4.0 — see [LICENSE](LICENSE). These marks may be used to refer to the
