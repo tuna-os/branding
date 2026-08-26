@@ -64,6 +64,21 @@ diff -u \
 
 Both commands should finish without errors or differences.
 
+## Testing
+
+The asset contract and manifest validity can be automatically verified using the Python test suite:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+This verifies:
+- `branding-manifest.json` schema version and structure.
+- Every root `.svg` file is present in the manifest and no extra assets exist.
+- SHA-256 digests match actual file contents.
+- SVGs are valid 128×128 viewbox elements without external URLs or references.
+
+
 ## License
 
 CC-BY-4.0 — see [LICENSE](LICENSE). These marks may be used to refer to the
