@@ -21,15 +21,17 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 - **Distribution**: **unversioned** — no tags, no releases. Consumers
   (tunaos `build_scripts/checks/verify-branding*.sh`) assert built images
   carry correct branding, but the source itself has no release contract.
+- **Validation**: `tests/test_branding.py` validates the manifest and SVG asset
+  contract locally. Automated CI execution is still outstanding (#9).
 - **Health**: 2 open issues — versioned consumer sync contract (#7),
-  manifest/SVG validation (#9).
+  validation-suite CI integration (#9).
 
 ### Priorities
 
 | Priority | Item | Tracking | Status |
 |----------|------|----------|--------|
 | P0 | Versioned release contract — tags + documented consumer pin | #7 | 🟡 Open |
-| P1 | Manifest + SVG asset validation | #9 | 🟡 Open |
+| P1 | Run the existing manifest + SVG validation suite in CI | #9 | 🟡 In progress |
 | P2 | ROADMAP-coverage entry in org ROADMAP tally | #1295 | ⬜ Not started |
 
 ---
@@ -43,7 +45,7 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 | Goal | Owner | Tracking | Status |
 |------|-------|----------|--------|
 | First tagged release + consumer contract doc | hanthor | #7 | ⬜ Not started |
-| Manifest validation green | hanthor | #9 | ⬜ Not started |
+| Manifest validation enforced in CI | hanthor | #9 | 🟡 In progress |
 
 ### Next Quarter (2026 Q4)
 
