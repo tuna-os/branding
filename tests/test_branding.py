@@ -59,5 +59,15 @@ class BrandingContractTests(unittest.TestCase):
                         )
 
 
+    def test_manifest_file_exists(self):
+        self.assertTrue(MANIFEST_PATH.exists(), "branding-manifest.json must exist in root")
+
+    def test_asset_filenames_end_with_svg(self):
+        for name in self.manifest["assets"]:
+            with self.subTest(asset=name):
+                self.assertTrue(name.endswith(".svg"), f"Asset {name} does not have .svg extension")
+
+
 if __name__ == "__main__":
     unittest.main()
+
