@@ -64,6 +64,28 @@ diff -u \
 
 Both commands should finish without errors or differences.
 
+## Verifying an asset set
+
+`tools/verify_assets.py` runs the same check as one command, for this
+repository or for a consumer that has vendored the marks. It is stdlib-only
+Python 3, so a consumer can vendor the single file rather than reimplement the
+`jq`/`sha256sum` pipeline:
+
+```bash
+# this repository
+python3 tools/verify_assets.py .
+
+# a consumer that vendors only part of the set
+python3 tools/verify_assets.py path/to/vendored/images \
+  --manifest path/to/branding-manifest.json --allow-missing
+```
+
+It reports missing, extra, and modified assets and exits non-zero on any of
+them. `--allow-missing` permits a partial set; extra and modified assets are
+still reported. The check is over raw file bytes, so a vendored copy that adds
+an attribution header or is rewritten by a build-time SVG preprocessor will not
+match.
+
 ## Running Tests
 
 An automated Python test suite is provided in `tests/test_branding.py` to validate manifest schema compliance, SVG dimensions (128x128), SHA-256 digest matching, asset completeness, and absence of external references.
