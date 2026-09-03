@@ -4,7 +4,6 @@ import unittest
 from pathlib import Path
 from xml.etree import ElementTree
 
-
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "branding-manifest.json"
 SVG_NAMESPACE = "http://www.w3.org/2000/svg"
