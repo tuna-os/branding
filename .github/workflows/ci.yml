@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+
+      # The contract suite: every root SVG is pinned by sha256 in
+      # branding-manifest.json, is a parseable 128x128 viewBox SVG, and carries
+      # no external references. Consumers copy these files and verify them
+      # against the manifest, so a digest that disagrees with its file is a
+      # supply-chain break downstream, not just a red test here.
+      - name: Branding contract tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Lint
+        run: |
+          python3 -m pip install --quiet ruff
+          ruff check .
+
+  # Sole required branch-protection check. Add every mandatory job to needs.
+  required-checks:
+    if: always()
+    needs: [validate]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Fail if a required job did not succeed
+        env:
+          NEEDS: ${{ toJson(needs) }}
+        run: |
+          failed=$(echo "$NEEDS" | jq -r 'to_entries[] | select(.value.result | IN("success", "skipped") | not) | .key')
+          test -z "$failed" || { echo "Failed jobs: $failed"; exit 1; }
