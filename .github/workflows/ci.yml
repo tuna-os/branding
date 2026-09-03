@@ -22,7 +22,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.14'
 
       # The contract suite: every root SVG is pinned by sha256 in
       # branding-manifest.json, is a parseable 128x128 viewBox SVG, and carries
