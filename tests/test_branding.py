@@ -66,6 +66,32 @@ class BrandingContractTests(unittest.TestCase):
             with self.subTest(asset=name):
                 self.assertTrue(name.endswith(".svg"), f"Asset {name} does not have .svg extension")
 
+    def test_assets_have_no_scripts_or_event_handlers(self):
+        for name in self.manifest["assets"]:
+            with self.subTest(asset=name):
+                root = ElementTree.parse(ROOT / name).getroot()
+                for element in root.iter():
+                    tag = element.tag.split("}")[-1]
+                    self.assertNotEqual(
+                        tag, "script", f"{name} embeds a <script> element"
+                    )
+                    self.assertNotIn(
+                        "{http://www.w3.org/1999/xhtml}",
+                        element.tag,
+                        f"{name} embeds a foreign xhtml element",
+                    )
+                    for attribute, value in element.attrib.items():
+                        local_attribute = attribute.split("}")[-1]
+                        self.assertFalse(
+                            local_attribute.lower().startswith("on"),
+                            f"{name} has event handler attribute {attribute!r}",
+                        )
+                        self.assertNotIn(
+                            "javascript:",
+                            value.lower(),
+                            f"{name} has a javascript: URI in {attribute!r}",
+                        )
+
 
 if __name__ == "__main__":
     unittest.main()
