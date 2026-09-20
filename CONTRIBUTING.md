@@ -39,8 +39,17 @@ python3 -m unittest discover -s tests
 
 This validates manifest schema compliance, that the manifest and the root
 SVG set match exactly, SHA-256 digest matching, the 128x128 viewBox, and the
-absence of external references. Run this (and the manual `jq`/`sha256sum`
-checks documented in `README.md`) before opening a pull request.
+absence of external references. Run this before opening a pull request.
+
+The manifest half of that check is also available on its own, and is what
+consumers run against a vendored asset set:
+
+```bash
+python3 tools/verify_assets.py .
+```
+
+Keep the two in step — the test suite calls `tools/verify_assets.py`, so the
+contract has one implementation rather than one per consumer.
 
 ## Code style
 
