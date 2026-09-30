@@ -43,9 +43,10 @@ ruff check .                               # py311, line-length 100, E/F/I
   attribute may contain a `url(http…)`, `url(file:…)` or protocol-relative URL.
 - The manifest and the root SVG set match exactly.
 
-> **There is no CI in this repository.** No `.github/workflows/` exists, so
-> nothing runs the suite on a push or PR. Run it locally before opening a PR —
-> a broken digest will otherwise reach consumers silently.
+> **CI runs the suite on every push and pull request** (`.github/workflows/ci.yml`).
+> The `required-checks` job is the terminal required check: it fails if the
+> contract suite or lint job did not succeed. Still run the suite locally
+> before opening a PR — CI catching a broken digest costs you a round trip.
 
 ## Design constraints
 
