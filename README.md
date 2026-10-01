@@ -1,8 +1,8 @@
 # TunaOS variant branding
 
-Flat vector marks for every TunaOS variant, drawn as one system: same
-geometry language, one accent color per variant, and each species identified
-by its real field mark — not just a palette swap.
+Flat vector marks for every TunaOS variant, drawn as one system. All marks
+use the same geometry language and one accent color per variant. The real
+field mark of each species identifies it, not a palette swap.
 
 | Mark | Accent | Field mark |
 |---|---|---|
@@ -34,11 +34,11 @@ self-contained (no external refs), safe for Flatpak/live-ISO offline use.
 `branding-manifest.json` is the machine-readable asset contract. Its
 `schema_version` covers the manifest format, while each value binds an asset
 name to its SHA-256 digest. Consumers can reject missing, extra, or modified
-assets before packaging an installer.
+assets before they package an installer.
 
 ## Maintaining the manifest
 
-After intentionally changing an SVG, update its digest in
+When you change an SVG on purpose, update its digest in
 `branding-manifest.json` from the repository root:
 
 ```bash
@@ -50,8 +50,9 @@ mv branding-manifest.json.new branding-manifest.json
 ```
 
 Replace `albacore.svg` with the asset that changed. Keep the manifest update in
-the same commit as the SVG change. Before committing, verify every declared
-asset and make sure the manifest neither omits nor names an extra SVG:
+the same commit as the SVG change. Before you commit, verify every declared
+asset. Also make sure that each root SVG has a manifest entry, and that the
+manifest has no entry for a missing file:
 
 ```bash
 jq -r '.assets | to_entries[] | "\(.value | sub("sha256:"; ""))  \(.key)"' \
@@ -66,7 +67,9 @@ Both commands should finish without errors or differences.
 
 ## Running Tests
 
-An automated Python test suite is provided in `tests/test_branding.py` to validate manifest schema compliance, SVG dimensions (128x128), SHA-256 digest matching, asset completeness, and absence of external references.
+The Python tests in `tests/test_branding.py` validate the manifest schema,
+the SVG dimensions (128x128) and the SHA-256 digests. They also make sure that
+the asset set is complete and that no file has external references.
 
 Run the test suite using Python's standard `unittest` module:
 
@@ -76,6 +79,6 @@ python3 -m unittest discover -s tests
 
 ## License
 
-CC-BY-4.0 — see [LICENSE](LICENSE). These marks may be used to refer to the
-TunaOS project (installers, docs, community content, etc.) with attribution;
-use does not imply endorsement by the TunaOS project.
+CC-BY-4.0 — see [LICENSE](LICENSE). You can use these marks with attribution
+to refer to the TunaOS project, for example in installers, docs, and community
+content. Such use does not imply endorsement by the TunaOS project.
