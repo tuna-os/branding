@@ -1,6 +1,6 @@
 # TunaOS Branding — Roadmap
 
-**Last updated**: 2026-08-24 | **Maintainer**: tuna-os (hanthor)
+**Last updated**: 2026-10-04 | **Maintainer**: tuna-os (hanthor)
 
 ---
 
@@ -13,26 +13,32 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 
 ---
 
-## Current Status
+## Current Status (Q4 2026 checkpoint)
+
+**Execution stalled**: Both Q3 launch goals (versioned release #7, CI validation #9) remain unstarted 5+ weeks post-planning. The assets and validation suite exist; publication and automation do not.
 
 - **Assets**: `tunaos.svg` master mark + per-variant marks (albacore,
   yellowfin, skipjack, bonito, marlin, flounder, grouper, guppy), plus
   `branding-manifest.json`.
 - **Distribution**: **unversioned** — no tags, no releases. Consumers
-  (tunaos `build_scripts/checks/verify-branding*.sh`) assert built images
-  carry correct branding, but the source itself has no release contract.
+  (tunaos `build_scripts/checks/verify-branding*.sh`) validate built images,
+  but the source has no release contract.
 - **Validation**: `tests/test_branding.py` validates the manifest and SVG asset
-  contract locally. Automated CI execution is still outstanding (#9).
-- **Health**: 2 open issues — versioned consumer sync contract (#7),
-  validation-suite CI integration (#9).
+  contract locally. CI integration (#9) is still blocked.
+- **Health**: Same 2 open issues — versioned consumer sync contract (#7),
+  validation-suite CI integration (#9). No progress recorded since 08-24.
+
+The repository itself is ACMM L0 compliant and well-structured. The gap is pure
+execution: one owner decision (versioning scheme) + one afternoon (tag +
+consumer doc) → first release.
 
 ### Priorities
 
-| Priority | Item | Tracking | Status |
-|----------|------|----------|--------|
-| P0 | Versioned release contract — tags + documented consumer pin | #7 | 🟡 Open |
-| P1 | Run the existing manifest + SVG validation suite in CI | #9 | 🟡 In progress |
-| P2 | ROADMAP-coverage entry in org ROADMAP tally | #1295 | ⬜ Not started |
+| Priority | Item | Tracking | Status | Age |
+|----------|------|----------|--------|-----|
+| P0 | Versioned release contract — tags + documented consumer pin | #7 | 🔴 Unstarted | 41d |
+| P1 | Run the existing manifest + SVG validation suite in CI | #9 | 🔴 Unstarted | 41d |
+| P2 | ROADMAP-coverage entry in org ROADMAP tally | #1295 | ⬜ Not started | 41d |
 
 ---
 
@@ -44,8 +50,8 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 
 | Goal | Owner | Tracking | Status |
 |------|-------|----------|--------|
-| First tagged release + consumer contract doc | hanthor | #7 | ⬜ Not started |
-| Manifest validation enforced in CI | hanthor | #9 | 🟡 In progress |
+| First tagged release + consumer contract doc | hanthor | #7 | 🔴 Unstarted (41d) |
+| Manifest validation enforced in CI | hanthor | #9 | 🔴 Unstarted (41d) |
 
 ### Next Quarter (2026 Q4)
 
@@ -55,6 +61,17 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 |------|-------|----------|--------|
 | New-variant mark process (hummingbird/gurnard et al.) documented | tuna-os | (org variant tracking) | ⬜ Not started |
 
----
+## Strategic risk
 
-*ROADMAP added by strategist agent (ACMM L6 — full mode). Signed-off-by: hanthor-hive-agent[bot] <290068839+hanthor-hive-agent[bot]@users.noreply.github.com>*
+Identity versioning is a prerequisite for multi-variant scaling (#1295) and
+consumer trust. The 41-day execution gap suggests either:
+
+- **Staffing**: versioning scheme needs one owner decision; automation (#9) is
+  straightforward Python CI addition.
+- **Sequencing**: no blocker exists. Both issues are independent and
+  implementable in parallel.
+
+No architectural or technical risk; pure execution visibility problem.
+
+---
+*Maintained by the strategist agent (ACMM L6 — full mode). Last refresh: 2026-10-04.*
