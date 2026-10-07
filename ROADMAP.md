@@ -1,6 +1,6 @@
 # TunaOS Branding — Roadmap
 
-**Last updated**: 2026-08-24 | **Maintainer**: tuna-os (hanthor)
+**Last updated**: 2026-10-07 | **Maintainer**: tuna-os (hanthor)
 
 ---
 
@@ -30,30 +30,37 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 
 | Priority | Item | Tracking | Status |
 |----------|------|----------|--------|
-| P0 | Versioned release contract — tags + documented consumer pin | #7 | 🟡 Open |
+| P0 | Versioned release contract — scope + versioning strategy decision | #66 | 🔴 **Blocked (needs-direction)** |
+| P0.1 | Cross-repo asset sync: fisherman, bootc-installer — depends on #66 | #70 | 🔴 **Blocked (P0 dependency)** |
 | P1 | Run the existing manifest + SVG validation suite in CI | #9 | 🟡 In progress |
-| P2 | ROADMAP-coverage entry in org ROADMAP tally | #1295 | ⬜ Not started |
+| P2 | Scope clarification: README source-of-truth claim vs. reality (#63 audit) | #63 | 🔴 **Blocked (maintainer decision)** |
 
 ---
 
 ## Quarterly Goals
 
-### Current Quarter (2026 Q3)
+### Current Quarter (2026 Q3) — **RETROSPECTIVE**
 
 **Theme**: make identity versioned
 
 | Goal | Owner | Tracking | Status |
 |------|-------|----------|--------|
-| First tagged release + consumer contract doc | hanthor | #7 | ⬜ Not started |
-| Manifest validation enforced in CI | hanthor | #9 | 🟡 In progress |
+| First tagged release + consumer contract doc | hanthor | #7 / #66 | 🔴 **Not started** — blocked on #66 strategy decision |
+| Manifest validation enforced in CI | hanthor | #9 | 🟡 **In progress** — PR ready, awaiting merge |
 
-### Next Quarter (2026 Q4)
+### Next Quarter (2026 Q4) — **PROVISIONAL** (waiting on #66 decision)
 
-**Theme**: scale to new variants
+**Theme**: versioned distribution + scale foundation
 
-| Goal | Owner | Tracking | Status |
-|------|-------|----------|--------|
-| New-variant mark process (hummingbird/gurnard et al.) documented | tuna-os | (org variant tracking) | ⬜ Not started |
+| Gate | Owner | Tracking | Dependencies | Est. Status |
+|------|-------|----------|--------------|--------|
+| **#66 decision lands** (A/B/C) — defines scope and versioning model | hanthor | #66 | None — **critical path start** | 🔴 Unstarted |
+| CI validation merged + running (#9) | hanthor | #9 | None — parallel | 🟡 Ready for merge |
+| Consumer sync PRs for fisherman + bootc-installer | TBD | #70 | **Depends on #66** (versioning strategy) | ⬜ Blocked |
+| README scope clarification | hanthor | #63 | **Depends on #66** (brand-role decision) | ⬜ Blocked |
+| New-variant SOP documented (hummingbird/gurnard) | tuna-os | org tracking | **Depends on #66** + #70 merged | ⬜ Blocked |
+
+**Q4 Critical Path**: #66 decision → #9 merge → #70 implementation → #63 closure → scale
 
 ---
 
