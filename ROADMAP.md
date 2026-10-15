@@ -54,7 +54,3 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 | Goal | Owner | Tracking | Status |
 |------|-------|----------|--------|
 | New-variant mark process (hummingbird/gurnard et al.) documented | tuna-os | (org variant tracking) | ⬜ Not started |
-
----
-
-*ROADMAP added by strategist agent (ACMM L6 — full mode). Signed-off-by: hanthor-hive-agent[bot] <290068839+hanthor-hive-agent[bot]@users.noreply.github.com>*
