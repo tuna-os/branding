@@ -32,50 +32,78 @@ self-contained (no external refs), safe for Flatpak/live-ISO offline use.
   tip.
 
 `branding-manifest.json` is the machine-readable asset contract. Its
-`schema_version` covers the manifest format, while each value binds an asset
-name to its SHA-256 digest. Consumers can reject missing, extra, or modified
-assets before they package an installer.
+`schema_version` covers the manifest format. Each asset entry binds a name to:
+- `canonical_sha256`: SHA-256 digest of the normalized SVG form (attribute-sorted,
+  whitespace-normalized, comments removed) — invariant across build pipelines
+- `bytes_sha256`: SHA-256 of the raw file — for exact-copy verification
+
+The `revision` field records the commit this manifest describes, so consumers can
+pin a specific version and verify they have the right assets.
 
 ## Maintaining the manifest
 
-When you change an SVG on purpose, update its digest in
+When you change an SVG on purpose, update both digests and the revision in
 `branding-manifest.json` from the repository root:
 
 ```bash
 asset=albacore.svg
-digest=$(sha256sum "$asset" | cut -d ' ' -f 1)
-jq --arg asset "$asset" --arg digest "sha256:$digest" \
-  '.assets[$asset] = $digest' branding-manifest.json > branding-manifest.json.new
+bytes_digest=$(sha256sum "$asset" | cut -d ' ' -f 1)
+canonical_digest=$(python3 normalize_svg.py --digest "$asset" | cut -d ':' -f 2)
+revision=$(git rev-parse HEAD)
+jq --arg asset "$asset" --arg bytes "sha256:$bytes_digest" --arg canonical "sha256:$canonical_digest" --arg rev "$revision" \
+  '.assets[$asset].bytes_sha256 = $bytes | .assets[$asset].canonical_sha256 = $canonical | .revision = $rev' \
+  branding-manifest.json > branding-manifest.json.new
 mv branding-manifest.json.new branding-manifest.json
 ```
 
-Replace `albacore.svg` with the asset that changed. Keep the manifest update in
-the same commit as the SVG change. Before you commit, verify every declared
-asset. Also make sure that each root SVG has a manifest entry, and that the
-manifest has no entry for a missing file:
+Keep the manifest update in the same commit as the SVG change. Before you commit,
+verify every declared asset and that all assets have both digest types:
 
 ```bash
-jq -r '.assets | to_entries[] | "\(.value | sub("sha256:"; ""))  \(.key)"' \
+jq -r '.assets | to_entries[] | "\(.value.bytes_sha256 | sub("sha256:"; ""))  \(.key)"' \
   branding-manifest.json | sha256sum --check --strict
 
 diff -u \
   <(find . -maxdepth 1 -type f -name '*.svg' -printf '%f\n' | sort) \
   <(jq -r '.assets | keys[]' branding-manifest.json | sort)
-```
 
-Both commands should finish without errors or differences.
+jq '.assets | to_entries[] | select(.value.canonical_sha256 == null or .value.bytes_sha256 == null) | .key' \
+  branding-manifest.json | wc -l | grep '^0$'
+```
 
 ## Running Tests
 
 The Python tests in `tests/test_branding.py` validate the manifest schema,
-the SVG dimensions (128x128) and the SHA-256 digests. They also make sure that
-the asset set is complete and that no file has external references.
+the SVG dimensions (128x128) and the SHA-256 digests (both canonical and raw-byte).
+They also make sure that the asset set is complete and that no file has external
+references.
 
 Run the test suite using Python's standard `unittest` module:
 
 ```bash
 python3 -m unittest discover -s tests
 ```
+
+## Canonical Form Verification
+
+The `normalize_svg.py` utility normalizes SVGs to canonical form for verification.
+This ensures that an SVG that has been through a build pipeline (whitespace
+removed, comments stripped, attributes reordered) is still verifiable against the
+manifest's canonical digest.
+
+Usage:
+
+```bash
+# Compute canonical digest of an asset
+python3 normalize_svg.py --digest albacore.svg
+
+# Normalize an SVG file to canonical form (for inspection)
+python3 normalize_svg.py albacore.svg -o normalized-albacore.svg
+```
+
+Consumers can use this utility to verify that an SVG they have (possibly
+modified by build tools) still represents the canonical asset from this
+repository.
 
 ## License
 
