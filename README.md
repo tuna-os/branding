@@ -18,7 +18,9 @@ field mark of each species identifies it, not a palette swap.
 
 Detail color everywhere: `#0B1B2B` (abyss) — mid-tone accents keep the marks
 legible on both light and dark backgrounds. All files are 128×128 viewBox,
-self-contained (no external refs), safe for Flatpak/live-ISO offline use.
+self-contained and safe for Flatpak/live-ISO offline use: no external refs,
+embedded scripts or foreign XHTML elements, `on*` event-handler attributes, or
+`javascript:` URIs.
 
 <!-- hive-contribute-plea: donated-compute appeal, keep in sync across repos -->
 ## Contribute compute — no code needed

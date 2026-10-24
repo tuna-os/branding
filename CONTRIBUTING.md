@@ -26,11 +26,14 @@ Never post account credentials or API keys in issues or pull requests.
 1. For anything beyond a small fix, open an issue first that describes the
    change (new variant, palette tweak, etc.).
 2. Follow the existing visual system that `README.md` describes.
-   `tests/test_branding.py` enforces these properties:
+  `tests/test_branding.py` enforces these properties:
    - A 128x128 viewBox.
    - One accent color per variant, and `#0B1B2B` (abyss) for detail color.
    - The real field mark of the species.
+   - Root asset names end in `.svg`.
    - No external references (fonts, images, `url()`).
+   - No embedded `<script>` or foreign XHTML elements, `on*` event-handler
+     attributes, or `javascript:` URIs.
 3. After you change an SVG, update its digest in `branding-manifest.json` from
    the repository root:
 
