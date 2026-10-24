@@ -35,12 +35,15 @@ python3 -m unittest discover -s tests -v   # the contract suite
 ruff check .                               # py311, line-length 100, E/F/I
 ```
 
-`tests/test_branding.py` enforces four invariants beyond the digests:
+`tests/test_branding.py` enforces these invariants beyond the digests:
 
 - `schema_version` is `1` and `source` is this repo's URL.
 - Every asset parses as SVG with `viewBox="0 0 128 128"` exactly.
+- Root asset names end in `.svg`.
 - No external references — `href`/`xlink:href` must start with `#`, and no
   attribute may contain a `url(http…)`, `url(file:…)` or protocol-relative URL.
+- No embedded `<script>` or foreign XHTML elements, `on*` event-handler
+  attributes, or `javascript:` URIs.
 - The manifest and the root SVG set match exactly.
 
 > **CI runs the suite on every push and pull request** (`.github/workflows/ci.yml`).
