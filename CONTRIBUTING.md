@@ -33,6 +33,9 @@ Never post account credentials or API keys in issues or pull requests.
    - Emoji marks have a 128x128 viewBox.
    - Each variant mark has a light and a `-dark` wordmark.
    - No external references (fonts, images, `url()`).
+   - Each asset name in the manifest ends in `.svg`.
+   - No `<script>` elements, foreign XHTML elements, `on*` event handlers or
+     `javascript:` URIs.
 3. After you change an SVG, update its digest in `branding-manifest.json` from
    the repository root:
 
