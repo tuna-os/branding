@@ -24,9 +24,9 @@ jobs:
         with:
           python-version: '3.15'
 
-      # The contract suite: every root SVG is pinned by sha256 in
-      # branding-manifest.json, is a parseable 128x128 viewBox SVG, and carries
-      # no external references. Consumers copy these files and verify them
+      # The contract suite: every SVG in marks/ and wordmarks/ is pinned by
+      # sha256 in branding-manifest.json, parses as SVG, and carries no
+      # external references. Emoji marks have a 128x128 viewBox. Consumers copy these files and verify them
       # against the manifest, so a digest that disagrees with its file is a
       # supply-chain break downstream, not just a red test here.
       - name: Branding contract tests

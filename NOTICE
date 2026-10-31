@@ -1,0 +1,27 @@
+TunaOS branding — third-party sources
+
+The files in marks/ and wordmarks/ are copies from tuna-os/tunaOS:
+
+  marks/<variant>.svg       <- system_files/usr/share/tunaos/logos/<variant>.svg
+  marks/tunaos.svg          <- system_files/usr/share/pixmaps/tunaos.svg
+  wordmarks/<variant>.svg   <- system_files/usr/share/tunaos/lettermarks/<variant>.svg
+  wordmarks/<variant>-dark.svg
+                            <- system_files/usr/share/tunaos/lettermarks/<variant>-dark.svg
+
+The generator is scripts/branding/make-lettermarks.py in tuna-os/tunaOS.
+It is the source of truth. Do not edit these copies by hand.
+
+Emoji marks
+  The marks in marks/ and the mark inside each wordmark are glyphs from
+  Noto Emoji (https://github.com/googlefonts/noto-emoji).
+  Copyright Google LLC. Licensed under the Apache License, Version 2.0:
+  https://www.apache.org/licenses/LICENSE-2.0
+
+Wordmark lettering
+  The lettering in wordmarks/ is glyph outlines from the Baloo 2 typeface
+  (https://github.com/EkType/Baloo2).
+  Copyright The Baloo 2 Project Authors. Licensed under the SIL Open Font
+  License, Version 1.1: https://openfontlicense.org
+
+The arrangement of these parts into TunaOS marks is CC-BY-4.0 (see LICENSE),
+to the extent the upstream licenses permit.

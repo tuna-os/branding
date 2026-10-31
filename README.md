@@ -1,24 +1,30 @@
 # TunaOS variant branding
 
-Flat vector marks for every TunaOS variant, drawn as one system. All marks
-use the same geometry language and one accent color per variant. The real
-field mark of each species identifies it, not a palette swap.
+The TunaOS identity has two parts. These files are the same marks that ship in
+TunaOS images.
 
-| Mark | Accent | Field mark |
-|---|---|---|
-| `tunaos.svg` | `#2EC4B6` sonar | Master mark — roundel + fish |
-| `albacore.svg` | `#7FB7D9` ice | Very long pectoral fin |
-| `yellowfin.svg` | `#F4C542` yellow | Sickle dorsal/anal fins + finlets |
-| `skipjack.svg` | `#6C8EF5` periwinkle | Horizontal belly stripes |
-| `bonito.svg` | `#F4A259` coral | Oblique back stripes |
-| `marlin.svg` | `#3D7BF4` cobalt | Spear bill + sail dorsal |
-| `flounder.svg` | `#C4915C` sand | Flat oval, both eyes on one side, speckles |
-| `grouper.svg` | `#C75146` red | Deep body, downturned mouth, spiny dorsal, spots |
-| `guppy.svg` | `#E05299` magenta | Tiny body, huge two-tone fan tail |
+- **Wordmark** (`wordmarks/<variant>.svg`, `wordmarks/<variant>-dark.svg`):
+  the emoji mark plus the variant name in Baloo 2 lettering. Use the `-dark`
+  file on dark backgrounds.
+- **Emoji mark** (`marks/<variant>.svg`): one Noto Emoji glyph per variant.
+  `marks/tunaos.svg` is the TunaOS master mark (U+1F41F FISH).
 
-Detail color everywhere: `#0B1B2B` (abyss) — mid-tone accents keep the marks
-legible on both light and dark backgrounds. All files are 128×128 viewBox,
-self-contained (no external refs), safe for Flatpak/live-ISO offline use.
+The master TunaOS wordmark is `wordmarks/tunaos.svg` and
+`wordmarks/tunaos-dark.svg`.
+
+## Usage rule
+
+- Use the **wordmark** in wide contexts: headers, banners, login screens,
+  boot splash and installer title areas.
+- Use the **emoji mark** in small contexts: app and distro icons, favicons,
+  installer cards and terminal output.
+
+## Source of truth
+
+`scripts/branding/make-lettermarks.py` in
+[`tuna-os/tunaOS`](https://github.com/tuna-os/tunaOS) generates these files.
+This repository holds copies. To change a mark, change the generator in
+tunaOS, then copy the output here and update the manifest.
 
 <!-- hive-contribute-plea: donated-compute appeal, keep in sync across repos -->
 ## Contribute compute — no code needed
@@ -35,9 +41,9 @@ Never post account credentials or API keys in issues or pull requests.
 
 ## Usage
 
-- Installer Source-step cards: render at 96 px.
-- Welcome pages / ISO boot menus: 128–512 px, scale freely.
-- These are the source of truth. Consumers should pin a commit or release from
+- Emoji marks have a 128×128 viewBox. Scale them freely.
+- Wordmarks have a wide viewBox. Scale them by height.
+- Consumers should pin a commit or release from
   this repository and verify copied files against `branding-manifest.json`.
 - The installer consumer is
   [`tuna-os/fisherman:data/images/`](https://github.com/tuna-os/fisherman/tree/main/data/images/).
@@ -55,16 +61,16 @@ When you change an SVG on purpose, update its digest in
 `branding-manifest.json` from the repository root:
 
 ```bash
-asset=albacore.svg
+asset=marks/albacore.svg
 digest=$(sha256sum "$asset" | cut -d ' ' -f 1)
 jq --arg asset "$asset" --arg digest "sha256:$digest" \
   '.assets[$asset] = $digest' branding-manifest.json > branding-manifest.json.new
 mv branding-manifest.json.new branding-manifest.json
 ```
 
-Replace `albacore.svg` with the asset that changed. Keep the manifest update in
+Replace `marks/albacore.svg` with the asset that changed. Keep the manifest update in
 the same commit as the SVG change. Before you commit, verify every declared
-asset. Also make sure that each root SVG has a manifest entry, and that the
+asset. Also make sure that each SVG in `marks/` and `wordmarks/` has a manifest entry, and that the
 manifest has no entry for a missing file:
 
 ```bash
@@ -72,7 +78,7 @@ jq -r '.assets | to_entries[] | "\(.value | sub("sha256:"; ""))  \(.key)"' \
   branding-manifest.json | sha256sum --check --strict
 
 diff -u \
-  <(find . -maxdepth 1 -type f -name '*.svg' -printf '%f\n' | sort) \
+  <(find marks wordmarks -maxdepth 1 -type f -name '*.svg' | sort) \
   <(jq -r '.assets | keys[]' branding-manifest.json | sort)
 ```
 
@@ -81,7 +87,7 @@ Both commands should finish without errors or differences.
 ## Running Tests
 
 The Python tests in `tests/test_branding.py` validate the manifest schema,
-the SVG dimensions (128x128) and the SHA-256 digests. They also make sure that
+the SVG structure (128x128 for emoji marks) and the SHA-256 digests. They also make sure that
 the asset set is complete and that no file has external references.
 
 Run the test suite using Python's standard `unittest` module:
@@ -92,6 +98,8 @@ python3 -m unittest discover -s tests
 
 ## License
 
-CC-BY-4.0 — see [LICENSE](LICENSE). You can use these marks with attribution
+CC-BY-4.0 — see [LICENSE](LICENSE). Third-party parts keep their own
+licenses: Noto Emoji is Apache-2.0 and the Baloo 2 glyph outlines are OFL-1.1.
+See [NOTICE](NOTICE) for sources and attribution. You can use these marks with attribution
 to refer to the TunaOS project, for example in installers, docs, and community
 content. Such use does not imply endorsement by the TunaOS project.

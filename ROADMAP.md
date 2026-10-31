@@ -6,18 +6,17 @@
 
 ## Mission
 
-Own the TunaOS visual identity as one system: every variant mark drawn in the
-same geometry language, one accent color per variant, each species identified
-by its real field mark — and delivered to every consumer (variant images,
+Own the TunaOS visual identity as one system: a lettermark wordmark and a Noto
+emoji mark per variant, generated in tunaOS — and delivered to every consumer (variant images,
 installers, docs, press kit) as a **versioned contract**, not a file drop.
 
 ---
 
 ## Current Status
 
-- **Assets**: `tunaos.svg` master mark + per-variant marks (albacore,
-  yellowfin, skipjack, bonito, marlin, flounder, grouper, guppy), plus
-  `branding-manifest.json`.
+- **Assets**: `marks/` (Noto emoji marks, `marks/tunaos.svg` master) and
+  `wordmarks/` (light and dark lettermarks per variant), copied from tunaOS
+  `scripts/branding/make-lettermarks.py` output, plus `branding-manifest.json`.
 - **Distribution**: **unversioned** — no tags, no releases. Consumers
   (tunaos `build_scripts/checks/verify-branding*.sh`) assert built images
   carry correct branding, but the source itself has no release contract.
