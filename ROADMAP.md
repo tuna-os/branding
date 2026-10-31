@@ -1,6 +1,6 @@
 # TunaOS Branding — Roadmap
 
-**Last updated**: 2026-08-24 | **Maintainer**: tuna-os (hanthor)
+**Last updated**: 2026-10-31 | **Maintainer**: tuna-os (hanthor)
 
 ---
 
@@ -17,35 +17,49 @@ installers, docs, press kit) as a **versioned contract**, not a file drop.
 - **Assets**: `marks/` (Noto emoji marks, `marks/tunaos.svg` master) and
   `wordmarks/` (light and dark lettermarks per variant), copied from tunaOS
   `scripts/branding/make-lettermarks.py` output, plus `branding-manifest.json`.
-- **Distribution**: **unversioned** — no tags, no releases. Consumers
-  (tunaos `build_scripts/checks/verify-branding*.sh`) assert built images
-  carry correct branding, but the source itself has no release contract.
+- **Distribution**: **unversioned** — this repository has no tags or GitHub
+  releases. Issue #7 remains open. `tuna-os/fisherman` vendors copies of five
+  marks (`albacore`, `bonito`, `skipjack`, `tunaos`, `yellowfin`) in
+  `data/images/`. It has no `branding-manifest.json`, no source revision pin,
+  and no automated digest or freshness check. The other variants and the
+  `wordmarks/` set have no consumer path there.
 - **Validation**: `tests/test_branding.py` validates the manifest and SVG asset
   contract, enforced in CI (`ci.yml`) on every push and pull request via the
   terminal `required-checks` gate (#9, closed).
-- **Health**: 1 open issue — versioned consumer sync contract (#7).
+- **Health**: 1 open issue — the versioned release and consumer sync contract
+  (#7).
 
 ### Priorities
 
 | Priority | Item | Tracking | Status |
 |----------|------|----------|--------|
-| P0 | Versioned release contract — tags + documented consumer pin | #7 | 🟡 Open |
-| P1 | ROADMAP-coverage entry in org ROADMAP tally | #1295 | ⬜ Not started |
+| P0 | Versioned release contract — tags + documented consumer pin | #7 | 🟡 Open — zero tags/releases |
+| P1 | ROADMAP-coverage entry in org ROADMAP tally | #1295 | ✅ Indexed in `.github/ROADMAP-INDEX.md` |
 
 ---
 
 ## Quarterly Goals
 
-### Current Quarter (2026 Q3)
+### Previous Quarter (2026 Q3)
 
 **Theme**: make identity versioned
 
 | Goal | Owner | Tracking | Status |
 |------|-------|----------|--------|
-| First tagged release + consumer contract doc | hanthor | #7 | ⬜ Not started |
+| First tagged release + consumer contract doc | hanthor | #7 | ⏸ Carried forward — no tag, release, or consumer pin |
 | Manifest validation enforced in CI | hanthor | #9 | ✅ Done |
 
-### Next Quarter (2026 Q4)
+### Current Quarter (2026 Q4)
+
+**Theme**: version the identity and close the consumer delivery chain
+
+| Goal | Owner | Tracking | Status |
+|------|-------|----------|--------|
+| Publish first tagged release + document consumer pin | hanthor | #7 | ⬜ Open |
+| Deliver `marks/` and `wordmarks/` to `fisherman` with manifest, pin and freshness checks | tuna-os | #7 | ⬜ Open |
+| Keep the org ROADMAP index entry current | tuna-os | #1295 | ✅ Done |
+
+### Next Quarter (2027 Q1)
 
 **Theme**: scale to new variants
 
