@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "branding-manifest.json"
 SVG_NAMESPACE = "http://www.w3.org/2000/svg"
 XLINK_HREF = "{http://www.w3.org/1999/xlink}href"
+ASSET_DIRS = ("marks", "wordmarks")
 
 
 class BrandingContractTests(unittest.TestCase):
@@ -21,9 +22,22 @@ class BrandingContractTests(unittest.TestCase):
         self.assertIsInstance(self.manifest["assets"], dict)
         self.assertTrue(self.manifest["assets"])
 
-    def test_manifest_contains_every_and_only_root_svg(self):
-        files = {path.name for path in ROOT.glob("*.svg")}
+    def test_manifest_contains_every_and_only_asset_svg(self):
+        files = {
+            path.relative_to(ROOT).as_posix()
+            for directory in ASSET_DIRS
+            for path in (ROOT / directory).glob("*.svg")
+        }
         self.assertEqual(set(self.manifest["assets"]), files)
+        self.assertEqual(list(ROOT.glob("*.svg")), [], "SVGs belong in marks/ or wordmarks/")
+
+    def test_every_mark_has_light_and_dark_wordmark(self):
+        marks = {path.stem for path in (ROOT / "marks").glob("*.svg")} - {"tunaos"}
+        wordmarks = {path.stem for path in (ROOT / "wordmarks").glob("*.svg")}
+        for variant in marks:
+            with self.subTest(variant=variant):
+                self.assertIn(variant, wordmarks)
+                self.assertIn(f"{variant}-dark", wordmarks)
 
     def test_asset_digests_match_manifest(self):
         for name, expected in self.manifest["assets"].items():
@@ -31,11 +45,19 @@ class BrandingContractTests(unittest.TestCase):
                 digest = hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
                 self.assertEqual(expected, f"sha256:{digest}")
 
-    def test_assets_are_parseable_128_square_svgs(self):
+    def test_assets_are_parseable_svgs(self):
         for name in self.manifest["assets"]:
             with self.subTest(asset=name):
                 root = ElementTree.parse(ROOT / name).getroot()
                 self.assertEqual(root.tag, f"{{{SVG_NAMESPACE}}}svg")
+                self.assertTrue(root.attrib.get("viewBox"), f"{name} has no viewBox")
+
+    def test_emoji_marks_are_128_square(self):
+        for name in self.manifest["assets"]:
+            if not name.startswith("marks/"):
+                continue
+            with self.subTest(asset=name):
+                root = ElementTree.parse(ROOT / name).getroot()
                 self.assertEqual(root.attrib.get("viewBox"), "0 0 128 128")
 
     def test_assets_have_no_external_references(self):
@@ -59,7 +81,7 @@ class BrandingContractTests(unittest.TestCase):
 
 
     def test_manifest_file_exists(self):
-        self.assertTrue(MANIFEST_PATH.exists(), "branding-manifest.json must exist in root")
+        self.assertTrue(MANIFEST_PATH.exists(), "branding-manifest.json must exist")
 
     def test_asset_filenames_end_with_svg(self):
         for name in self.manifest["assets"]:

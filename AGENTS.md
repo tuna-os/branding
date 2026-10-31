@@ -1,8 +1,13 @@
 # AGENTS.md — agent guide for tuna-os/branding
 
-Nine flat vector marks for the TunaOS variants, drawn as one system. This repo
-is **source assets plus a contract**, not an application: the SVGs are the
-product, and `branding-manifest.json` is what lets consumers trust a copy.
+The TunaOS identity: lettermark wordmarks (`wordmarks/`) and Noto emoji marks
+(`marks/`). This repo is **source assets plus a contract**, not an
+application: the SVGs are the product, and `branding-manifest.json` is what
+lets consumers trust a copy.
+
+The files are copies. `scripts/branding/make-lettermarks.py` in tuna-os/tunaOS
+generates them and is the source of truth. Change the generator there, then
+copy the output here. Sources and licenses are in [`NOTICE`](NOTICE).
 
 Human-facing docs: [`README.md`](README.md) (the mark table and usage rules),
 [`CONTRIBUTING.md`](CONTRIBUTING.md).
@@ -10,7 +15,7 @@ Human-facing docs: [`README.md`](README.md) (the mark table and usage rules),
 ## The one rule that will bite you
 
 **Editing an SVG without regenerating its digest breaks the build.**
-`branding-manifest.json` pins a `sha256:` for every root-level `.svg`, and
+`branding-manifest.json` pins a `sha256:` for every `.svg` in `marks/` and `wordmarks/`, and
 `tests/test_branding.py` compares each file against it. Any byte-level change —
 including an editor adding a trailing newline — invalidates the entry.
 
@@ -19,14 +24,15 @@ python3 - <<'PY'
 import hashlib, json, pathlib
 root = pathlib.Path(".")
 m = json.loads((root / "branding-manifest.json").read_text())
-m["assets"] = {p.name: "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()
-               for p in sorted(root.glob("*.svg"))}
+m["assets"] = {p.as_posix(): "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()
+               for d in ("marks", "wordmarks") for p in sorted(root.glob(f"{d}/*.svg"))}
 (root / "branding-manifest.json").write_text(json.dumps(m, indent=2) + "\n")
 PY
 ```
 
 Adding or deleting a mark means updating the manifest too: the test asserts the
-manifest names **every** root SVG and **only** root SVGs.
+manifest names **every** SVG in `marks/` and `wordmarks/` and nothing else.
+No SVG may sit at the repository root.
 
 ## Checks
 
@@ -38,10 +44,12 @@ ruff check .                               # py311, line-length 100, E/F/I
 `tests/test_branding.py` enforces four invariants beyond the digests:
 
 - `schema_version` is `1` and `source` is this repo's URL.
-- Every asset parses as SVG with `viewBox="0 0 128 128"` exactly.
+- Every asset parses as SVG with a `viewBox`. Emoji marks use
+  `viewBox="0 0 128 128"` exactly.
+- Every variant mark has a light and a `-dark` wordmark.
 - No external references — `href`/`xlink:href` must start with `#`, and no
   attribute may contain a `url(http…)`, `url(file:…)` or protocol-relative URL.
-- The manifest and the root SVG set match exactly.
+- The manifest and the `marks/` + `wordmarks/` SVG set match exactly.
 
 > **CI runs the suite on every push and pull request** (`.github/workflows/ci.yml`).
 > The `required-checks` job is the terminal required check: it fails if the
@@ -50,22 +58,17 @@ ruff check .                               # py311, line-length 100, E/F/I
 
 ## Design constraints
 
-These are contract, not taste — the marks are consumed offline at small sizes:
+These are contract, not taste — the marks are consumed offline:
 
-- **128×128 viewBox**, always. Consumers render at 96 px (installer cards) and
-  128–512 px (welcome pages, ISO boot menus).
+- **Usage rule.** Wordmark for wide contexts (headers, login, boot splash).
+  Emoji mark for small contexts (icons, favicons, terminal).
 - **Self-contained.** No external refs, no embedded raster, no web fonts —
   files must work inside a Flatpak sandbox and on a live ISO with no network.
-- **One accent per variant**, with `#0B1B2B` (abyss) for detail. Marks must stay
-  legible on both light and dark backgrounds, which is why detail is a mid-tone
-  rather than pure black.
-- Each species is identified by its **real field mark** (albacore's long
-  pectoral fin, guppy's fan tail), not by a palette swap. Keep the geometry
-  language consistent across the set when adding one.
+  The wordmark lettering is outlined glyph paths, not text.
 
 ## Downstream
 
-These files are the source of truth and get **copied** into consumers, not
+These files get **copied** into consumers, not
 submoduled. The known consumer is
 [`tuna-os/fisherman:data/images/`](https://github.com/tuna-os/fisherman/tree/main/data/images/).
 Consumers pin a commit or release and verify their copies against the manifest,
