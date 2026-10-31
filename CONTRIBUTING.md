@@ -5,7 +5,7 @@ Noto emoji marks in `marks/`. It also
 holds the machine-readable asset manifest (`branding-manifest.json`) that
 downstream consumers — installers, docs, ISO welcome screens — pin against
 and verify.
-There is no application to build here; contributions are mostly
+There is no application to build here. Contributions are mostly
 marks copied from the tunaOS generator, manifest updates, doc changes, and the Python test suite
 in `tests/`.
 
