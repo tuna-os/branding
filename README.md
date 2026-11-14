@@ -4,8 +4,10 @@ The TunaOS identity has two parts. These files are the same marks that ship in
 TunaOS images.
 
 - **Wordmark** (`wordmarks/<variant>.svg`, `wordmarks/<variant>-dark.svg`):
-  the emoji mark plus the variant name in Baloo 2 type. Use the `-dark`
-  file on dark backgrounds.
+  the emoji mark plus the variant name in Baloo 2 type. The `-dark` suffix
+  names the text color, not the background. `<variant>.svg` has light text
+  (`#F4F7FB`): use it on dark backgrounds. `<variant>-dark.svg` has dark text
+  (`#0D1B2A`): use it on light backgrounds.
 - **Emoji mark** (`marks/<variant>.svg`): one glyph from Noto Emoji per variant.
   `marks/tunaos.svg` is the TunaOS master mark (U+1F41F FISH).
 
