@@ -53,6 +53,21 @@ Never post account credentials or API keys in issues or pull requests.
 
 ## Running the test suite
 
+> **Nothing regenerates the manifest digest for you.** CI
+> (`.github/workflows/ci.yml`) only verifies it: it never updates
+> `branding-manifest.json`. If an SVG changes and its `sha256:` entry does not,
+> the build fails. Downstream consumers such as fisherman verify copied files
+> against this manifest, so a digest that disagrees with its file is a
+> supply-chain break for them. Catch it locally before you open a PR.
+
+Checklist before you open a PR:
+
+- [ ] Regenerate the digest of every changed SVG (see above), in the same
+  commit as the SVG.
+- [ ] `python3 -m unittest discover -s tests`
+- [ ] `ruff check tests/`
+- [ ] The `sha256sum --check` and `diff` manifest checks from `README.md`.
+
 ```bash
 python3 -m unittest discover -s tests
 ```
