@@ -90,9 +90,12 @@ Both commands should finish without errors or differences.
 
 The Python tests in `tests/test_branding.py` validate the manifest schema,
 the SVG structure (128x128 for emoji marks) and the SHA-256 digests. They also make sure that
-the asset set is complete and that no file has external references. No file
-can contain scripts, foreign XHTML elements, `on*` event handlers or
-`javascript:` URIs.
+the asset set is complete and that no file has external references. Each file
+may use only a fixed list of static drawing elements, so `<style>`, `<script>`,
+`<text>`, `<image>`, `<a>`, `<set>` and `<foreignObject>` fail. A file has no
+`<!DOCTYPE>` and no processing instruction. Every `url(` points at `#id`. No
+attribute value has a backslash or a quote. The only namespaced attributes are
+`xlink:href`, `xml:space` and `xml:lang`.
 
 Run the test suite using Python's standard `unittest` module:
 
