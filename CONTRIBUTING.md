@@ -42,15 +42,11 @@ Never post account credentials or API keys in issues or pull requests.
      a backslash or a quote.
    - Namespaced attributes are limited to `xlink:href`, `xml:space` and `xml:lang`.
    - No `on*` event handlers or `javascript:` URIs.
-3. After you change an SVG, update its digest in `branding-manifest.json` from
-   the repository root:
+3. After you change an SVG, regenerate `branding-manifest.json` from the
+   repository root. This updates both `assets` and `canonical_assets`:
 
    ```bash
-   asset=marks/<name>.svg
-   digest=$(sha256sum "$asset" | cut -d ' ' -f 1)
-   jq --arg asset "$asset" --arg digest "sha256:$digest" \
-     '.assets[$asset] = $digest' branding-manifest.json > branding-manifest.json.new
-   mv branding-manifest.json.new branding-manifest.json
+   python3 scripts/branding_manifest.py update
    ```
 
    Keep the manifest update in the same commit as the SVG change. Make sure
@@ -59,17 +55,17 @@ Never post account credentials or API keys in issues or pull requests.
 
 ## Running the test suite
 
-> **Nothing regenerates the manifest digest for you.** CI
+> **CI does not regenerate the manifest for you.** CI
 > (`.github/workflows/ci.yml`) only verifies it: it never updates
-> `branding-manifest.json`. If an SVG changes and its `sha256:` entry does not,
-> the build fails. Downstream consumers, such as fisherman, check the files
+> `branding-manifest.json`. If an SVG changes and its digests do not, the
+> build fails. Downstream consumers, such as fisherman, check the files
 > they copy against this manifest. A digest that disagrees with its file is a
 > supply-chain break for them. Catch it locally before you open a PR.
 
 Checklist before you open a PR:
 
-- [ ] Regenerate the digest of every changed SVG (see above), in the same
-  commit as the SVG.
+- [ ] Run `python3 scripts/branding_manifest.py update` after you change an
+  SVG, and commit the manifest with the SVG.
 - [ ] `python3 -m unittest discover -s tests`
 - [ ] `ruff check tests/`
 - [ ] The `sha256sum --check` and `diff` manifest checks from `README.md`.
