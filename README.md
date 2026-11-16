@@ -47,6 +47,10 @@ Never post account credentials or API keys in issues or pull requests.
 - Wordmarks have a wide viewBox. Scale them by height.
 - Consumers should pin a commit or release from
   this repository and verify copied files against `branding-manifest.json`.
+  Use `scripts/branding_manifest.py verify` for this check. It needs only the
+  Python standard library, so a consumer can vendor it. A copy passes as
+  `exact` when its bytes match, or as `canonical` when only comments, the XML
+  declaration or blank text differ.
 - The installer consumer is
   [`tuna-os/fisherman:data/images/`](https://github.com/tuna-os/fisherman/tree/main/data/images/).
   Update its pin and vendored assets together; do not copy an unversioned branch
@@ -59,18 +63,16 @@ assets before they package an installer.
 
 ## Maintaining the manifest
 
-When you change an SVG on purpose, update its digest in
-`branding-manifest.json` from the repository root:
+When you change an SVG on purpose, regenerate `branding-manifest.json` from
+the repository root:
 
 ```bash
-asset=marks/albacore.svg
-digest=$(sha256sum "$asset" | cut -d ' ' -f 1)
-jq --arg asset "$asset" --arg digest "sha256:$digest" \
-  '.assets[$asset] = $digest' branding-manifest.json > branding-manifest.json.new
-mv branding-manifest.json.new branding-manifest.json
+python3 scripts/branding_manifest.py update
 ```
 
-Replace `marks/albacore.svg` with the asset that changed. Keep the manifest update in
+This rewrites both digest maps: `assets` (exact bytes) and `canonical_assets`
+(canonical XML). Do not edit only `assets` by hand: the test suite then fails,
+because `canonical_assets` no longer matches. Keep the manifest update in
 the same commit as the SVG change. Before you commit, verify every declared
 asset. Also make sure that each SVG in `marks/` and `wordmarks/` has a manifest entry, and that the
 manifest has no entry for a missing file:
