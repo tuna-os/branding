@@ -56,8 +56,8 @@ Never post account credentials or API keys in issues or pull requests.
 > **Nothing regenerates the manifest digest for you.** CI
 > (`.github/workflows/ci.yml`) only verifies it: it never updates
 > `branding-manifest.json`. If an SVG changes and its `sha256:` entry does not,
-> the build fails. Downstream consumers such as fisherman verify copied files
-> against this manifest, so a digest that disagrees with its file is a
+> the build fails. Downstream consumers, such as fisherman, check the files
+> they copy against this manifest. A digest that disagrees with its file is a
 > supply-chain break for them. Catch it locally before you open a PR.
 
 Checklist before you open a PR:
