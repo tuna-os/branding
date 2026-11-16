@@ -50,8 +50,12 @@ ruff check .                               # py311, line-length 100, E/F/I
 - No external references — `href`/`xlink:href` must start with `#`, and no
   attribute may contain a `url(http…)`, `url(file:…)` or protocol-relative URL.
 - Each asset name in the manifest ends in `.svg`.
-- No asset contains a `<script>` element or a foreign XHTML element. No
-  attribute is an `on*` event handler, and no attribute contains a
+- Allowlist: SVG namespace only, and only the elements in `ALLOWED_ELEMENTS`
+  (so no `<style>`, `<script>`, `<text>`, `<image>`, `<a>`, `<set>`,
+  `<foreignObject>`). No `<!DOCTYPE>`, no processing instruction. Every `url(`
+  points at `#id`; no attribute value has a backslash or a quote. Namespaced
+  attributes: `xlink:href`, `xml:space`, `xml:lang` only.
+- No attribute is an `on*` event handler, and no attribute contains a
   `javascript:` URI.
 - The manifest and the `marks/` + `wordmarks/` SVG set match exactly.
 

@@ -34,8 +34,14 @@ Never post account credentials or API keys in issues or pull requests.
    - Each variant mark has a light and a `-dark` wordmark.
    - No external references (fonts, images, `url()`).
    - Each asset name in the manifest ends in `.svg`.
-   - No `<script>` elements, foreign XHTML elements, `on*` event handlers or
-     `javascript:` URIs.
+   - Only the allowed static drawing elements (`ALLOWED_ELEMENTS` in the
+     test), so no `<style>`, `<script>`, `<text>`, `<image>`, `<a>`, `<set>`
+     or `<foreignObject>`. Adding an element needs a reviewed change to that list.
+   - No `<!DOCTYPE>` and no processing instruction.
+   - Every `url(` points at `#id`, in any letter case. No attribute value has
+     a backslash or a quote.
+   - Namespaced attributes are limited to `xlink:href`, `xml:space` and `xml:lang`.
+   - No `on*` event handlers or `javascript:` URIs.
 3. After you change an SVG, update its digest in `branding-manifest.json` from
    the repository root:
 
