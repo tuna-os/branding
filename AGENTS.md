@@ -14,25 +14,21 @@ Human-facing docs: [`README.md`](README.md) (the mark table and usage rules),
 
 ## The one rule that will bite you
 
-**Editing an SVG without regenerating its digest breaks the build.**
-`branding-manifest.json` pins a `sha256:` for every `.svg` in `marks/` and `wordmarks/`, and
-`tests/test_branding.py` compares each file against it. Any byte-level change —
-including an editor adding a trailing newline — invalidates the entry.
+**Editing an SVG without regenerating its digests breaks the build.**
+`branding-manifest.json` keeps two digest maps for every `.svg` in `marks/` and
+`wordmarks/`: `assets` (exact bytes) and `canonical_assets` (canonical XML).
+`tests/test_branding.py` compares each file against `assets`. Any byte-level
+change — including an editor adding a trailing newline — invalidates the entry.
+`tests/test_branding_manifest_tool.py` requires the committed manifest to equal
+what the tool below writes, so a hand edit of `assets` alone fails the suite.
 
 ```bash
-python3 - <<'PY'
-import hashlib, json, pathlib
-root = pathlib.Path(".")
-m = json.loads((root / "branding-manifest.json").read_text())
-m["assets"] = {p.as_posix(): "sha256:" + hashlib.sha256(p.read_bytes()).hexdigest()
-               for d in ("marks", "wordmarks") for p in sorted(root.glob(f"{d}/*.svg"))}
-(root / "branding-manifest.json").write_text(json.dumps(m, indent=2) + "\n")
-PY
+python3 scripts/branding_manifest.py update
 ```
 
 Adding or deleting a mark means updating the manifest too: the test asserts the
 manifest names **every** SVG in `marks/` and `wordmarks/` and nothing else.
-No SVG may sit at the repository root.
+The same command adds and removes entries. No SVG may sit at the repository root.
 
 ## Checks
 
