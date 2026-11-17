@@ -34,10 +34,10 @@ Never post account credentials or API keys in issues or pull requests.
    - Each variant mark has a light and a `-dark` wordmark.
    - No external references (fonts, images, `url()`).
    - Each asset name in the manifest ends in `.svg`.
-   - Only the allowed static drawing elements (`ALLOWED_ELEMENTS` in the
-     test), so no `<style>`, `<script>`, `<text>`, `<image>`, `<a>`, `<set>`
+   - Only the static SVG elements that the test allows (`ALLOWED_ELEMENTS`
+     in the test), so no `<style>`, `<script>`, `<text>`, `<image>`, `<a>`, `<set>`
      or `<foreignObject>`. Adding an element needs a reviewed change to that list.
-   - No `<!DOCTYPE>` and no processing instruction.
+   - No `<!DOCTYPE>` and no `<?…?>` instruction other than the XML declaration.
    - Every `url(` points at `#id`, in any letter case. No attribute value has
      a backslash or a quote.
    - Namespaced attributes are limited to `xlink:href`, `xml:space` and `xml:lang`.
@@ -67,7 +67,7 @@ Checklist before you open a PR:
 - [ ] Run `python3 scripts/branding_manifest.py update` after you change an
   SVG, and commit the manifest with the SVG.
 - [ ] `python3 -m unittest discover -s tests`
-- [ ] `ruff check tests/`
+- [ ] `ruff check .`
 - [ ] The `sha256sum --check` and `diff` manifest checks from `README.md`.
 
 ```bash
@@ -81,11 +81,11 @@ manual `jq`/`sha256sum` checks in `README.md`) before you open a pull request.
 
 ## Code style
 
-[Ruff](https://docs.astral.sh/ruff/) lints the Python test suite
-(the configuration is in `ruff.toml`):
+[Ruff](https://docs.astral.sh/ruff/) lints the Python code in `tests/` and
+`scripts/`, as CI does (the configuration is in `ruff.toml`):
 
 ```bash
-ruff check tests/
+ruff check .
 ```
 
 ## Branch and PR convention
