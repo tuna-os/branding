@@ -60,6 +60,12 @@ ruff check .                               # py311, line-length 100, E/F/I
 > contract suite or lint job did not succeed. Still run the suite locally
 > before opening a PR — CI catching a broken digest costs you a round trip.
 
+Two other workflows also gate pull requests, see
+[`CONTRIBUTING.md`](CONTRIBUTING.md#other-checks-on-a-pull-request):
+`actions-security.yml` (`actions.lock` verify + zizmor, every PR) and
+`ste.yml` (Prose: STE lint of `README.md` and `CONTRIBUTING.md` on Markdown
+changes, `.ste-budget` is `0`, so a docs-only PR can go red).
+
 ## Design constraints
 
 These are contract, not taste — the marks are consumed offline:
