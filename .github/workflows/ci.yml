@@ -31,7 +31,12 @@ jobs:
       # external references. Emoji marks have a 128x128 viewBox. Consumers copy these files and verify them
       # against the manifest, so a digest that disagrees with its file is a
       # supply-chain break downstream, not just a red test here.
+      # Python must compile the reviewed .py files. With the cache prefix
+      # outside the checkout, Python does not read a __pycache__ directory
+      # that a commit put in the tree.
       - name: Branding contract tests
+        env:
+          PYTHONPYCACHEPREFIX: ${{ runner.temp }}/pycache
         run: python3 -m unittest discover -s tests -v
 
       - name: Lint
