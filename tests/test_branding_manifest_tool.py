@@ -94,6 +94,22 @@ class VerifyTests(unittest.TestCase):
             tool.verify_copy(self.manifest, "marks/tunaos.svg", copy), (True, "canonical")
         )
 
+    def test_rejects_copy_with_doctype(self):
+        text = (ROOT / "marks/tunaos.svg").read_text(encoding="utf-8")
+        doctypes = (
+            '<!DOCTYPE svg SYSTEM "https://example.invalid/a.dtd">',
+            '<!DOCTYPE svg [<!ENTITY x "y">]>',
+            '<!DOCTYPE svg [<!ENTITY % r SYSTEM "https://example.invalid/a.dtd"> %r;'
+            ' <!ATTLIST svg onload CDATA "alert(1)">]>',
+        )
+        for index, doctype in enumerate(doctypes):
+            with self.subTest(doctype=doctype):
+                copy = self.dir / f"doctype{index}.svg"
+                copy.write_text(text.replace("<svg", doctype + "<svg", 1), encoding="utf-8")
+                ok, detail = tool.verify_copy(self.manifest, "marks/tunaos.svg", copy)
+                self.assertFalse(ok)
+                self.assertIn("DOCTYPE", detail)
+
     def test_rejects_other_asset_unknown_name_missing_and_unparseable_file(self):
         garbage = self.dir / "garbage.svg"
         garbage.write_text("not xml", encoding="utf-8")

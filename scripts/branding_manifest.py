@@ -34,7 +34,7 @@ import hashlib
 import json
 import sys
 from pathlib import Path
-from xml.etree.ElementTree import ParseError, canonicalize
+from xml.etree.ElementTree import ParseError, TreeBuilder, XMLParser, canonicalize
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_NAME = "branding-manifest.json"
@@ -50,6 +50,24 @@ def canonical_digest(path: Path) -> str:
     """Return the ``sha256:`` digest of the canonical XML form of ``path``."""
     canonical = canonicalize(from_file=str(path), with_comments=False, strip_text=True)
     return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+class _DoctypeFinder(TreeBuilder):
+    """Note a ``<!DOCTYPE>``, which canonical form drops."""
+
+    found = False
+
+    def doctype(self, name, pubid, system):
+        self.found = True
+
+
+def has_doctype(path: Path) -> bool:
+    """Return whether the XML in ``path`` has a ``<!DOCTYPE>`` declaration."""
+    builder = _DoctypeFinder()
+    parser = XMLParser(target=builder)
+    parser.feed(Path(path).read_bytes())
+    parser.close()
+    return builder.found
 
 
 def asset_names(root: Path = ROOT) -> list[str]:
@@ -94,6 +112,9 @@ def verify_copy(manifest: dict, asset: str, copy: Path) -> tuple[bool, str]:
         return True, "exact"
     if asset in canonical:
         try:
+            # Canonical form drops the DOCTYPE, which the contract suite forbids.
+            if has_doctype(copy):
+                return False, f"{copy} has a <!DOCTYPE> declaration"
             digest = canonical_digest(copy)
         except (ParseError, ValueError) as error:
             return False, f"{copy} is not parseable XML: {error}"
