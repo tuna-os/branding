@@ -66,6 +66,14 @@ Two other workflows also gate pull requests, see
 `ste.yml` (Prose: STE lint of `README.md` and `CONTRIBUTING.md` on Markdown
 changes, `.ste-budget` is `0`, so a docs-only PR can go red).
 
+## Upstream check
+
+`python3 scripts/check_upstream.py <tunaOS checkout>` compares each copy with
+its tunaOS source as `NOTICE` maps it. It reports missing, extra and differing
+copies, and exits 1 if any. It needs a local checkout, so it is not part of the
+contract suite or `required-checks`. `tests/test_check_upstream.py` covers it
+on fixture trees.
+
 ## Design constraints
 
 These are contract, not taste — the marks are consumed offline:
