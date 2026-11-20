@@ -9,8 +9,8 @@ The files are copies. `scripts/branding/make-lettermarks.py` in tuna-os/tunaOS
 generates them and is the source of truth. Change the generator there, then
 copy the output here. Sources and licenses are in [`NOTICE`](NOTICE).
 
-Human-facing docs: [`README.md`](README.md) (the mark table and usage rules),
-[`CONTRIBUTING.md`](CONTRIBUTING.md).
+Human-facing docs: [`README.md`](README.md) (the two kinds of mark, usage
+rules and manifest checks), [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 ## The one rule that will bite you
 
