@@ -80,7 +80,10 @@ def main(argv=None) -> int:
     parser.add_argument("upstream", type=Path, help="path to a tuna-os/tunaOS checkout")
     args = parser.parse_args(argv)
     if not (args.upstream / "system_files").is_dir():
-        print(f"error: {args.upstream} has no system_files/, not a tunaOS checkout", file=sys.stderr)
+        print(
+            f"error: {args.upstream} has no system_files/, not a tunaOS checkout",
+            file=sys.stderr,
+        )
         return 2
     problems = check(args.upstream)
     for problem in problems:
