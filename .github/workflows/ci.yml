@@ -41,7 +41,7 @@ jobs:
 
       - name: Lint
         run: |
-          python3 -m pip install --quiet ruff
+          python3 -m pip install --quiet -r requirements-ci.txt
           ruff check .
 
   # Sole required branch-protection check. Add every mandatory job to needs.
