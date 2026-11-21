@@ -1,0 +1,45 @@
+name: upstream-sync
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'marks/**'
+      - 'wordmarks/**'
+      - 'scripts/check_upstream.py'
+
+permissions: {}
+
+jobs:
+  # Fails when marks/ or wordmarks/ no longer match the tunaOS files that
+  # NOTICE says they are copied from. Not in required-checks: a tunaOS
+  # commit must not block unrelated branding pull requests.
+  check:
+    runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/checkout@v7.0.1
+        with:
+          repository: tuna-os/tunaos
+          path: tunaos-src
+          persist-credentials: false
+          sparse-checkout: |
+            system_files/usr/share/tunaos/logos
+            system_files/usr/share/tunaos/lettermarks
+            system_files/usr/share/pixmaps
+
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.15'
+
+      - name: Compare copies with tunaOS
+        env:
+          PYTHONPYCACHEPREFIX: ${{ runner.temp }}/pycache
+        run: python3 scripts/check_upstream.py tunaos-src
