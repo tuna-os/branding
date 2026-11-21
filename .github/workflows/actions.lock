@@ -11,6 +11,9 @@ workflows:
         - 'actions/setup-python@v7.1.0'
     '.github/workflows/drop-bot-review-requests.yml': []
     '.github/workflows/ste.yml': []
+    '.github/workflows/upstream-sync.yml':
+        - 'actions/checkout@v7.0.1'
+        - 'actions/setup-python@v7.1.0'
 dependencies:
     'actions/checkout@v7.0.1':
         ref: 'v7.0.1'
