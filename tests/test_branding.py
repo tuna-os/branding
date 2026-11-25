@@ -4,6 +4,7 @@ import re
 import unittest
 from pathlib import Path
 from xml.etree import ElementTree
+from xml.parsers import expat
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "branding-manifest.json"
@@ -45,18 +46,28 @@ ALLOWED_NAMESPACED_ATTRIBUTES = frozenset(
 
 
 class _DeclarationRecorder(ElementTree.TreeBuilder):
-    """Record the declarations that ElementTree parses and then drops."""
+    """Record the processing instructions that ElementTree parses and then drops."""
 
     def __init__(self):
         super().__init__()
         self.declarations = []
 
-    def doctype(self, name, pubid, system):
-        self.declarations.append("<!DOCTYPE> declaration")
-
     def pi(self, target, data=None):
         self.declarations.append(f"<?{target}?> processing instruction")
         return super().pi(target, data)
+
+
+def _has_doctype(data):
+    """Return whether the XML has a DOCTYPE.
+
+    This asks expat. Without its C accelerator, ElementTree does not pass a
+    DOCTYPE that has only an internal subset to the tree builder.
+    """
+    found = []
+    parser = expat.ParserCreate()
+    parser.StartDoctypeDeclHandler = lambda *declaration: found.append(declaration)
+    parser.Parse(data, True)
+    return bool(found)
 
 
 def svg_allowlist_problems(data):
@@ -65,7 +76,8 @@ def svg_allowlist_problems(data):
     parser = ElementTree.XMLParser(target=builder)
     parser.feed(data)
     root = parser.close()
-    problems = list(builder.declarations)
+    problems = ["<!DOCTYPE> declaration"] if _has_doctype(data) else []
+    problems += builder.declarations
     for element in root.iter():
         namespace, _, local_name = element.tag.rpartition("}")
         if namespace != f"{{{SVG_NAMESPACE}" or local_name not in ALLOWED_ELEMENTS:
@@ -100,6 +112,10 @@ UNSAFE_SVG_SAMPLES = {
     ),
     "doctype": (
         _svg("", '<!DOCTYPE svg SYSTEM "https://example.invalid/a.dtd">'),
+        "<!DOCTYPE> declaration",
+    ),
+    "doctype with only an internal subset": (
+        _svg("", '<!DOCTYPE svg [<!ENTITY x "y">]>'),
         "<!DOCTYPE> declaration",
     ),
     "uppercase URL function": (

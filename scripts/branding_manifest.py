@@ -34,7 +34,8 @@ import hashlib
 import json
 import sys
 from pathlib import Path
-from xml.etree.ElementTree import ParseError, TreeBuilder, XMLParser, canonicalize
+from xml.etree.ElementTree import ParseError, canonicalize
+from xml.parsers import expat
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_NAME = "branding-manifest.json"
@@ -52,22 +53,23 @@ def canonical_digest(path: Path) -> str:
     return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
-class _DoctypeFinder(TreeBuilder):
-    """Note a ``<!DOCTYPE>``, which canonical form drops."""
+def has_doctype(path: Path) -> bool:
+    """Return whether the XML in ``path`` has a ``<!DOCTYPE>`` declaration.
 
+    This asks expat. ElementTree passes a DOCTYPE to its target, but without
+    the C accelerator (``_elementtree``) it passes only a DOCTYPE that has an
+    external identifier. A DOCTYPE with only an internal subset is not passed.
+    """
     found = False
 
-    def doctype(self, name, pubid, system):
-        self.found = True
+    def start_doctype(name, system, public, has_internal_subset):
+        nonlocal found
+        found = True
 
-
-def has_doctype(path: Path) -> bool:
-    """Return whether the XML in ``path`` has a ``<!DOCTYPE>`` declaration."""
-    builder = _DoctypeFinder()
-    parser = XMLParser(target=builder)
-    parser.feed(Path(path).read_bytes())
-    parser.close()
-    return builder.found
+    parser = expat.ParserCreate()
+    parser.StartDoctypeDeclHandler = start_doctype
+    parser.Parse(Path(path).read_bytes(), True)
+    return found
 
 
 def asset_names(root: Path = ROOT) -> list[str]:
@@ -116,7 +118,7 @@ def verify_copy(manifest: dict, asset: str, copy: Path) -> tuple[bool, str]:
             if has_doctype(copy):
                 return False, f"{copy} has a <!DOCTYPE> declaration"
             digest = canonical_digest(copy)
-        except (ParseError, ValueError) as error:
+        except (ParseError, expat.ExpatError, ValueError) as error:
             return False, f"{copy} is not parseable XML: {error}"
         if canonical[asset] == digest:
             return True, "canonical"
